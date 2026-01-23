@@ -1,9 +1,11 @@
-use crate::token::Token;
+use crate::token::{Token, TokenKind};
 
 pub struct Lexer {
     src: Vec<char>,
     pos: usize,
-    last_token: Option<Token>,
+    line: usize,
+    col: usize,
+    last_token: Option<TokenKind>,
 }
 
 impl Lexer {
@@ -11,6 +13,8 @@ impl Lexer {
         Self {
             src: input.chars().collect(),
             pos: 0,
+            line: 1,
+            col: 1,
             last_token: None,
         }
     }
@@ -19,83 +23,106 @@ impl Lexer {
         let mut tokens = Vec::new();
         loop {
             let t = self.next_token();
-            if t == Token::Eof { tokens.push(t); break; }
+            let eof = t.kind == TokenKind::Eof;
             tokens.push(t);
+            if eof {
+                break;
+            }
         }
         tokens
     }
 
     fn next_token(&mut self) -> Token {
-        if let Some(t) = self.skip_ws() {
-            self.last_token = Some(t.clone());
-            return t;
+        if let Some(k) = self.skip_ws() {
+            return self.make(k);
         }
 
         let c = match self.peek() {
             Some(c) => c,
-            None => return Token::Eof,
+            None => return self.make(TokenKind::Eof),
         };
 
-        let tok = match c {
-            '(' => { self.pos += 1; Token::LParen }
-            ')' => { self.pos += 1; Token::RParen }
-            '{' => { self.pos += 1; Token::LBrace }
-            '}' => { self.pos += 1; Token::RBrace }
-            ',' => { self.pos += 1; Token::Comma }
-            ';' => { self.pos += 1; Token::Semicolon }
+        let kind = match c {
+            '(' => { self.bump(); TokenKind::LParen }
+            ')' => { self.bump(); TokenKind::RParen }
+            '{' => { self.bump(); TokenKind::LBrace }
+            '}' => { self.bump(); TokenKind::RBrace }
+            ',' => { self.bump(); TokenKind::Comma }
+            ';' => { self.bump(); TokenKind::Semicolon }
+            '+' => { self.bump(); TokenKind::Plus }
+            '-' => { self.bump(); TokenKind::Minus }
+            '*' => { self.bump(); TokenKind::Star }
+            '/' => { self.bump(); TokenKind::Slash }
             '=' => {
-                if self.peek2('=') { self.pos += 2; Token::EqEq }
-                else { self.pos += 1; Token::Eq }
+                if self.peek2('=') { self.bump2(); TokenKind::EqEq }
+                else { self.bump(); TokenKind::Eq }
             }
-            '!' if self.peek2('=') => { self.pos += 2; Token::Ne }
+            '!' if self.peek2('=') => { self.bump2(); TokenKind::Ne }
+            '!' => { self.bump(); TokenKind::Bang }
             '>' => {
-                if self.peek2('=') { self.pos += 2; Token::Ge }
-                else { self.pos += 1; Token::Gt }
+                if self.peek2('=') { self.bump2(); TokenKind::Ge }
+                else { self.bump(); TokenKind::Gt }
             }
             '<' => {
-                if self.peek2('=') { self.pos += 2; Token::Le }
-                else { self.pos += 1; Token::Lt }
+                if self.peek2('=') { self.bump2(); TokenKind::Le }
+                else { self.bump(); TokenKind::Lt }
             }
-            '&' if self.peek2('&') => { self.pos += 2; Token::AndAnd }
-            '|' if self.peek2('|') => { self.pos += 2; Token::OrOr }
+            '&' if self.peek2('&') => { self.bump2(); TokenKind::AndAnd }
+            '|' if self.peek2('|') => { self.bump2(); TokenKind::OrOr }
             '"' => self.read_string(),
             c if c.is_ascii_digit() => self.read_number(),
             c if c.is_ascii_alphabetic() || c == '_' => self.read_ident(),
-            _ => { self.pos += 1; return self.next_token(); }
+            _ => { self.bump(); return self.next_token(); }
         };
 
-        self.last_token = Some(tok.clone());
-        tok
+        self.last_token = Some(kind.clone());
+        self.make(kind)
     }
 
-    fn skip_ws(&mut self) -> Option<Token> {
-        let mut saw_newline = false;
+    fn make(&self, kind: TokenKind) -> Token {
+        Token { kind, line: self.line, col: self.col }
+    }
 
+    fn bump(&mut self) {
+        self.pos += 1;
+        self.col += 1;
+    }
+
+    fn bump2(&mut self) {
+        self.pos += 2;
+        self.col += 2;
+    }
+
+    fn skip_ws(&mut self) -> Option<TokenKind> {
+        let mut newline = false;
         while let Some(c) = self.peek() {
             if c == '\n' {
-                saw_newline = true;
                 self.pos += 1;
+                self.line += 1;
+                self.col = 1;
+                newline = true;
             } else if c.is_whitespace() {
-                self.pos += 1;
+                self.bump();
             } else {
                 break;
             }
         }
 
-        if saw_newline {
+        if newline {
             if let Some(t) = &self.last_token {
                 match t {
-                    Token::Ident(_) |
-                    Token::Number(_) |
-                    Token::Str(_) |
-                    Token::RParen => {
-                        return Some(Token::Semicolon);
+                    TokenKind::Ident(_)
+                    | TokenKind::Number(_)
+                    | TokenKind::Str(_)
+                    | TokenKind::True
+                    | TokenKind::False
+                    | TokenKind::RParen => {
+                        return Some(TokenKind::Semicolon);
                     }
                     _ => {}
                 }
             }
         }
-
         None
     }
 
@@ -107,41 +134,45 @@ impl Lexer {
         self.src.get(self.pos + 1) == Some(&c)
     }
 
-    fn read_string(&mut self) -> Token {
-        self.pos += 1;
+    fn read_string(&mut self) -> TokenKind {
+        self.bump();
         let mut s = String::new();
         while let Some(c) = self.peek() {
-            self.pos += 1;
+            self.bump();
             if c == '"' { break; }
             s.push(c);
         }
-        Token::Str(s)
+        TokenKind::Str(s)
     }
 
-    fn read_number(&mut self) -> Token {
+    fn read_number(&mut self) -> TokenKind {
         let mut s = String::new();
         while let Some(c) = self.peek() {
             if !c.is_ascii_digit() { break; }
             s.push(c);
-            self.pos += 1;
+            self.bump();
         }
-        Token::Number(s.parse().unwrap())
+        TokenKind::Number(s.parse().unwrap())
     }
 
-    fn read_ident(&mut self) -> Token {
+    fn read_ident(&mut self) -> TokenKind {
         let mut s = String::new();
         while let Some(c) = self.peek() {
             if !(c.is_ascii_alphanumeric() || c == '_') { break; }
             s.push(c);
-            self.pos += 1;
+            self.bump();
         }
-
         match s.as_str() {
-            "var" => Token::Var,
-            "if" => Token::If,
-            "else" => Token::Else,
-            "loop" => Token::Loop,
-            _ => Token::Ident(s),
+            "var" => TokenKind::Var,
+            "if" => TokenKind::If,
+            "elif" => TokenKind::Elif,
+            "else" => TokenKind::Else,
+            "loop" => TokenKind::Loop,
+            "break" => TokenKind::Break,
+            "continue" => TokenKind::Continue,
+            "true" => TokenKind::True,
+            "false" => TokenKind::False,
+            _ => TokenKind::Ident(s),
         }
     }
 }

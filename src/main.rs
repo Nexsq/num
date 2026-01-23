@@ -4,25 +4,41 @@ mod lexer;
 mod parser;
 mod interpreter;
 mod engine;
+mod commands;
 
+use std::env;
 use std::fs;
 use crate::{lexer::Lexer, parser::Parser, engine::Engine};
 
 fn main() {
-    let src = fs::read_to_string("test.num").unwrap();
+    let file = match env::args().nth(1) {
+        Some(f) => f,
+        None => {
+            return;
+        }
+    };
+
+    let src = match fs::read_to_string(&file) {
+        Ok(s) => s,
+        Err(e) => {
+            println!("Failed to read {}: {}", file, e);
+            return;
+        }
+    };
 
     let mut lexer = Lexer::new(&src);
     let tokens = lexer.tokenize();
-
     let mut parser = Parser::new(tokens);
 
     match parser.parse() {
         Ok(ast) => {
             let mut engine = Engine::new();
-            engine.run(ast);
+            if let Err(e) = engine.run(ast) {
+                println!("Runtime error: {}", e);
+            }
         }
         Err(e) => {
-            println!("Syntax error: {e}");
+            println!("Syntax error: {}", e);
         }
     }
 }

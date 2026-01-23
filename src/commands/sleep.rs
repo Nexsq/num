@@ -1,10 +1,12 @@
-use crate::engine::{Engine, Value};
-use std::{thread, time::Duration};
+use crate::{
+    engine::Engine,
+    interpreter::Value,
+};
 
 pub fn register(engine: &mut Engine) {
-    engine.add_command("sleep", |args, _| {
-        let ms = args[0].as_i64()? as u64;
-        thread::sleep(Duration::from_millis(ms));
-        Ok(())
+    engine.register("sleep", |_, args| {
+        if let Some(Value::Num(ms)) = args.get(0) {
+            std::thread::sleep(std::time::Duration::from_millis(*ms as u64));
+        }
     });
 }
