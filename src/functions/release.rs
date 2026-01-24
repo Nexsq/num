@@ -1,12 +1,8 @@
 use std::collections::HashMap;
-use enigo::{
-    Button,
-    Direction::Release,
-    Enigo, Key, Settings,
-    Mouse, Keyboard,
-};
+use enigo::{Button, Direction::Release, Enigo, Key, Settings, Mouse, Keyboard};
 
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use super::BuiltinFn;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
@@ -14,11 +10,15 @@ pub fn register(map: &mut HashMap<String, BuiltinFn>) {
 }
 
 fn release(args: Vec<Value>) -> Value {
+    if let Err(e) = expect_arity("release", &args, 1) {
+        return e;
+    }
+
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     let sym = match args.get(0) {
-        Some(Value::Symbol(s)) => s.as_str(),
-        _ => return Value::Bool(false),
+        Some(Value::Symbol(s)) | Some(Value::Str(s)) => s.as_str(),
+        _ => return Value::Error("release expects key or button name".into()),
     };
 
     match sym {
@@ -70,7 +70,7 @@ fn release(args: Vec<Value>) -> Value {
         "F11" => { let _ = enigo.key(Key::F11, Release); }
         "F12" => { let _ = enigo.key(Key::F12, Release); }
 
-        _ => {}
+        _ => return Value::Error("invalid release target".into()),
     }
 
     Value::Bool(false)

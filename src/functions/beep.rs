@@ -1,4 +1,5 @@
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use std::collections::HashMap;
 
 #[cfg(target_os = "windows")]
@@ -11,6 +12,10 @@ pub fn register(map: &mut HashMap<String, fn(Vec<Value>) -> Value>) {
 }
 
 fn beep(args: Vec<Value>) -> Value {
+    if let Err(e) = expect_arity("beep", &args, 1) {
+        return e;
+    }
+
     let pitch = match args.get(0) {
         Some(Value::Num(n)) => *n,
         _ => 440,
@@ -21,7 +26,11 @@ fn beep(args: Vec<Value>) -> Value {
     #[cfg(target_os = "windows")]
     unsafe {
         Beep(freq, 200);
+        Value::Bool(true)
     }
 
-    Value::Bool(true)
+    #[cfg(not(target_os = "windows"))]
+    {
+        Value::Error("beep is only supported on Windows".into())
+    }
 }

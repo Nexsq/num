@@ -1,4 +1,5 @@
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use rand::Rng;
 
 pub fn register(
@@ -8,8 +9,8 @@ pub fn register(
 }
 
 fn random(args: Vec<Value>) -> Value {
-    if args.len() != 2 {
-        return Value::Error("random expects 2 arguments".into());
+    if let Err(e) = expect_arity("random", &args, 2) {
+        return e;
     }
 
     let (a, b) = match (&args[0], &args[1]) {

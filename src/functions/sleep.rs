@@ -1,5 +1,6 @@
 use std::{collections::HashMap, thread, time::Duration};
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use super::BuiltinFn;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
@@ -7,6 +8,10 @@ pub fn register(map: &mut HashMap<String, BuiltinFn>) {
 }
 
 fn sleep(args: Vec<Value>) -> Value {
+    if let Err(e) = expect_arity("sleep", &args, 1) {
+        return e;
+    }
+
     let ms = match args.get(0) {
         Some(Value::Num(n)) => *n,
         _ => return Value::Bool(false),

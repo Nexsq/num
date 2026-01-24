@@ -1,4 +1,5 @@
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use chrono::{Datelike, Timelike, Local};
 
 pub fn register(map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Value>) {
@@ -6,8 +7,8 @@ pub fn register(map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Va
 }
 
 fn time(args: Vec<Value>) -> Value {
-    if args.len() != 1 {
-        return Value::Error("time expects 1 argument".into());
+    if let Err(e) = expect_arity("time", &args, 1) {
+        return e;
     }
 
     let unit = match &args[0] {
@@ -18,13 +19,13 @@ fn time(args: Vec<Value>) -> Value {
     let now = Local::now();
 
     let value = match unit {
-        "millisecond" | "ms" => now.timestamp_millis() % 1000,
-        "second" | "sec" | "s" => now.second() as i64,
-        "minute" | "min" |"m" => now.minute() as i64,
-        "hour" | "h" => now.hour() as i64,
-        "day" => now.day() as i64,
-        "month" => now.month() as i64,
-        "year" => now.year() as i64,
+        "millisecond" | "milliseconds" | "ms" => now.timestamp_millis() % 1000,
+        "second" | "seconds" | "sec" | "s" => now.second() as i64,
+        "minute" | "minutes" | "min" | "m" => now.minute() as i64,
+        "hour" | "hours" | "h" => now.hour() as i64,
+        "day" | "days" => now.day() as i64,
+        "month" | "months" => now.month() as i64,
+        "year" | "years" => now.year() as i64,
         _ => return Value::Error("invalid time unit".into()),
     };
 

@@ -100,7 +100,6 @@ impl Context {
 
                 if let Some(cmd) = self.cmds.get(name) {
                     let result = cmd(vals);
-
                     if let Value::Error(e) = result {
                         *self.error.lock().unwrap() = Some(e);
                     }
@@ -180,69 +179,6 @@ impl Context {
                         "Down" => keys.contains(&Keycode::Down),
                         "Left" => keys.contains(&Keycode::Left),
                         "Right" => keys.contains(&Keycode::Right),
-                        k if k.starts_with('F') => match k {
-                            "F1" => keys.contains(&Keycode::F1),
-                            "F2" => keys.contains(&Keycode::F2),
-                            "F3" => keys.contains(&Keycode::F3),
-                            "F4" => keys.contains(&Keycode::F4),
-                            "F5" => keys.contains(&Keycode::F5),
-                            "F6" => keys.contains(&Keycode::F6),
-                            "F7" => keys.contains(&Keycode::F7),
-                            "F8" => keys.contains(&Keycode::F8),
-                            "F9" => keys.contains(&Keycode::F9),
-                            "F10" => keys.contains(&Keycode::F10),
-                            "F11" => keys.contains(&Keycode::F11),
-                            "F12" => keys.contains(&Keycode::F12),
-                            _ => false,
-                        },
-                        k if k.len() == 1 && k.chars().next().unwrap().is_ascii_digit() => {
-                            let d = k.chars().next().unwrap();
-                            keys.iter().any(|kc| match kc {
-                                Keycode::Key0 => d == '0',
-                                Keycode::Key1 => d == '1',
-                                Keycode::Key2 => d == '2',
-                                Keycode::Key3 => d == '3',
-                                Keycode::Key4 => d == '4',
-                                Keycode::Key5 => d == '5',
-                                Keycode::Key6 => d == '6',
-                                Keycode::Key7 => d == '7',
-                                Keycode::Key8 => d == '8',
-                                Keycode::Key9 => d == '9',
-                                _ => false,
-                            })
-                        }
-                        k if k.len() == 1 => {
-                            let c = k.chars().next().unwrap().to_ascii_lowercase();
-                            keys.iter().any(|kc| match kc {
-                                Keycode::A => c == 'a',
-                                Keycode::B => c == 'b',
-                                Keycode::C => c == 'c',
-                                Keycode::D => c == 'd',
-                                Keycode::E => c == 'e',
-                                Keycode::F => c == 'f',
-                                Keycode::G => c == 'g',
-                                Keycode::H => c == 'h',
-                                Keycode::I => c == 'i',
-                                Keycode::J => c == 'j',
-                                Keycode::K => c == 'k',
-                                Keycode::L => c == 'l',
-                                Keycode::M => c == 'm',
-                                Keycode::N => c == 'n',
-                                Keycode::O => c == 'o',
-                                Keycode::P => c == 'p',
-                                Keycode::Q => c == 'q',
-                                Keycode::R => c == 'r',
-                                Keycode::S => c == 's',
-                                Keycode::T => c == 't',
-                                Keycode::U => c == 'u',
-                                Keycode::V => c == 'v',
-                                Keycode::W => c == 'w',
-                                Keycode::X => c == 'x',
-                                Keycode::Y => c == 'y',
-                                Keycode::Z => c == 'z',
-                                _ => false,
-                            })
-                        }
                         _ => false,
                     };
 
@@ -331,52 +267,56 @@ impl Context {
             }
 
             Expr::Call { name, args } => {
-                let f = self.funcs.lock().unwrap().get(name).cloned()
-                    .ok_or(format!("undefined function {}", name))?;
+                let vals = args
+                    .iter()
+                    .map(|a| self.eval(a))
+                    .collect::<Result<Vec<_>, _>>()?;
 
-                let (params, body) = match f {
-                    Node::Function { params, body, .. } => (params, body),
-                    _ => unreachable!(),
-                };
+                if let Some(cmd) = self.cmds.get(name) {
+                    Ok(cmd(vals))
+                } else {
+                    let f = self.funcs.lock().unwrap().get(name).cloned()
+                        .ok_or(format!("undefined function {}", name))?;
 
-                let mut locals = HashMap::new();
-                for (i, (p, def)) in params.iter().enumerate() {
-                    let v = if let Some(a) = args.get(i) {
-                        self.eval(a)?
-                    } else if let Some(d) = def {
-                        self.eval(d)?
-                    } else {
-                        return Err(format!("missing argument {}", p));
+                    let (params, body) = match f {
+                        Node::Function { params, body, .. } => (params, body),
+                        _ => unreachable!(),
                     };
-                    locals.insert(p.clone(), v);
-                }
 
-                let saved = self.vars.lock().unwrap().clone();
-                *self.vars.lock().unwrap() = locals;
-
-                let mut ret = Value::Bool(false);
-                for stmt in body.iter() {
-                    match self.exec(stmt)? {
-                        Flow::Return(v) => {
-                            ret = v;
-                            break;
-                        }
-                        Flow::None => {}
-                        _ => return Err("invalid control flow in function".into()),
+                    let mut locals = HashMap::new();
+                    for (i, (p, def)) in params.iter().enumerate() {
+                        let v = if let Some(a) = args.get(i) {
+                            self.eval(a)?
+                        } else if let Some(d) = def {
+                            self.eval(d)?
+                        } else {
+                            return Err(format!("missing argument {}", p));
+                        };
+                        locals.insert(p.clone(), v);
                     }
-                }
 
-                *self.vars.lock().unwrap() = saved;
-                Ok(ret)
+                    let saved = self.vars.lock().unwrap().clone();
+                    *self.vars.lock().unwrap() = locals;
+
+                    let mut ret = Value::Bool(false);
+                    for stmt in body.iter() {
+                        match self.exec(stmt)? {
+                            Flow::Return(v) => {
+                                ret = v;
+                                break;
+                            }
+                            Flow::None => {}
+                            _ => return Err("invalid control flow in function".into()),
+                        }
+                    }
+
+                    *self.vars.lock().unwrap() = saved;
+                    Ok(ret)
+                }
             }
 
             Expr::Unary(op, e) => {
                 let v = self.eval(e)?;
-
-                if let Value::Error(_) = v {
-                    return Ok(v);
-                }
-
                 match (op, v) {
                     (Op::Sub, Value::Num(n)) => Ok(Value::Num(-n)),
                     (Op::Not, Value::Bool(b)) => Ok(Value::Bool(!b)),
@@ -387,13 +327,6 @@ impl Context {
             Expr::Binary(a, op, b) => {
                 let l = self.eval(a)?;
                 let r = self.eval(b)?;
-
-                if matches!(l, Value::Error(_)) {
-                    return Ok(l);
-                }
-                if matches!(r, Value::Error(_)) {
-                    return Ok(r);
-                }
 
                 match (l, r, op) {
                     (Value::Num(x), Value::Num(y), Op::Add) => Ok(Value::Num(x + y)),

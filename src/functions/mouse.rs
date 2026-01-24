@@ -1,9 +1,5 @@
 use std::collections::HashMap;
-use enigo::{
-    Coordinate,
-    Enigo, Settings,
-    Mouse,
-};
+use enigo::{Coordinate, Enigo, Settings, Mouse};
 
 use crate::interpreter::Value;
 use crate::functions::expect_arity;
@@ -22,24 +18,23 @@ fn mouse(args: Vec<Value>) -> Value {
 
     let x = match args.get(0) {
         Some(Value::Num(n)) => *n as i32,
-        _ => return Value::Bool(false),
+        _ => return Value::Error("mouse expects number x".into()),
     };
 
     let y = match args.get(1) {
         Some(Value::Num(n)) => *n as i32,
-        _ => return Value::Bool(false),
+        _ => return Value::Error("mouse expects number y".into()),
     };
 
     let coord = match args.get(2) {
-        Some(Value::Symbol(s)) => match s.as_str() {
+        Some(Value::Symbol(s)) | Some(Value::Str(s)) => match s.as_str() {
             "abs" | "absolute" => Coordinate::Abs,
             "rel" | "relative" => Coordinate::Rel,
-            _ => return Value::Bool(false),
+            _ => return Value::Error("mouse expects abs or rel".into()),
         },
-        _ => return Value::Bool(false),
+        _ => return Value::Error("mouse expects coordinate mode".into()),
     };
 
     let _ = enigo.move_mouse(x, y, coord);
-
     Value::Bool(false)
 }

@@ -1,9 +1,5 @@
 use std::collections::HashMap;
-use enigo::{
-    Axis,
-    Enigo, Settings,
-    Mouse,
-};
+use enigo::{Axis, Enigo, Settings, Mouse};
 
 use crate::interpreter::Value;
 use crate::functions::expect_arity;
@@ -22,19 +18,18 @@ fn scroll(args: Vec<Value>) -> Value {
 
     let amount = match args.get(0) {
         Some(Value::Num(n)) => *n as i32,
-        _ => return Value::Bool(false),
+        _ => return Value::Error("scroll expects number amount".into()),
     };
 
     let axis = match args.get(1) {
-        Some(Value::Symbol(s)) => match s.as_str() {
-            "ver" | "vertical" => Axis::Vertical,
-            "hor" | "horizontal" => Axis::Horizontal,
-            _ => return Value::Bool(false),
+        Some(Value::Symbol(s)) | Some(Value::Str(s)) => match s.as_str() {
+            "ver" | "vertical" | "v" => Axis::Vertical,
+            "hor" | "horizontal" | "h" => Axis::Horizontal,
+            _ => return Value::Error("scroll expects ver/hor".into()),
         },
-        _ => return Value::Bool(false),
+        _ => return Value::Error("scroll expects axis name".into()),
     };
 
     let _ = enigo.scroll(amount, axis);
-
     Value::Bool(false)
 }

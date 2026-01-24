@@ -1,10 +1,8 @@
 use std::collections::HashMap;
-use enigo::{
-    Enigo, Settings,
-    Keyboard,
-};
+use enigo::{Enigo, Settings, Keyboard};
 
 use crate::interpreter::Value;
+use crate::functions::expect_arity;
 use super::BuiltinFn;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
@@ -12,14 +10,17 @@ pub fn register(map: &mut HashMap<String, BuiltinFn>) {
 }
 
 fn string(args: Vec<Value>) -> Value {
+    if let Err(e) = expect_arity("string", &args, 1) {
+        return e;
+    }
+
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     let text = match args.get(0) {
-        Some(Value::Str(s)) => s,
-        _ => return Value::Bool(false),
+        Some(Value::Str(s)) | Some(Value::Symbol(s)) => s,
+        _ => return Value::Error("string expects text".into()),
     };
 
     let _ = enigo.text(text);
-
     Value::Bool(false)
 }

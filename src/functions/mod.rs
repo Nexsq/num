@@ -29,8 +29,10 @@ pub mod string;
 pub mod exit;
 pub mod time;
 pub mod random;
-pub mod mouse_pos;
+pub mod get_mouse;
 pub mod beep;
+pub mod background;
+pub mod get_resolution;
 
 pub type BuiltinFn = fn(Vec<Value>) -> Value;
 
@@ -46,6 +48,8 @@ pub fn register_all(map: &mut HashMap<String, BuiltinFn>) {
     exit::register(map);
     time::register(map);
     random::register(map);
-    mouse_pos::register(map);
+    get_mouse::register(map);
     beep::register(map);
+    background::register(map);
+    get_resolution::register(map);
 }
