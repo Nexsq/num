@@ -22,8 +22,8 @@ fn get_mouse(args: Vec<Value>) -> Value {
     let (x, y) = device.get_mouse().coords;
 
     match axis {
-        "x" => Value::Num(x as i64),
-        "y" => Value::Num(y as i64),
+        "hor" | "x" | "width" => Value::Num(x as i64),
+        "ver" | "y" | "height" => Value::Num(y as i64),
         _ => Value::Error("get_mouse expects x/y".into()),
     }
 }
