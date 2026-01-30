@@ -2,9 +2,7 @@ use crate::interpreter::Value;
 use crate::functions::expect_arity;
 use rand::Rng;
 
-pub fn register(
-    map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Value>
-) {
+pub fn register(map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Value>) {
     map.insert("random".into(), random);
 }
 
