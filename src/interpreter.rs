@@ -153,11 +153,13 @@ impl Context {
                         "MMB" => mouse[3],
                         "MB4" => mouse[4],
                         "MB5" => mouse[5],
+
                         "Enter" | "Return" => keys.contains(&Keycode::Enter),
                         "Space" => keys.contains(&Keycode::Space),
                         "Tab" => keys.contains(&Keycode::Tab),
                         "Esc" | "Escape" => keys.contains(&Keycode::Escape),
                         "Backspace" => keys.contains(&Keycode::Backspace),
+
                         "Ctrl" | "Control" => keys.contains(&Keycode::LControl) || keys.contains(&Keycode::RControl),
                         "LCtrl" | "LControl" => keys.contains(&Keycode::LControl),
                         "RCtrl" | "RControl" => keys.contains(&Keycode::RControl),
@@ -169,16 +171,85 @@ impl Context {
                         "RShift" => keys.contains(&Keycode::RShift),
                         "Super" | "Meta" => keys.contains(&Keycode::LMeta) || keys.contains(&Keycode::RMeta),
                         "CapsLock" | "Caps" => keys.contains(&Keycode::CapsLock),
+
                         "Insert" => keys.contains(&Keycode::Insert),
                         "Delete" | "Del" => keys.contains(&Keycode::Delete),
                         "Home" => keys.contains(&Keycode::Home),
                         "End" => keys.contains(&Keycode::End),
                         "PageUp" | "PgUp" => keys.contains(&Keycode::PageUp),
                         "PageDown" | "PgDown" => keys.contains(&Keycode::PageDown),
+
                         "Up" => keys.contains(&Keycode::Up),
                         "Down" => keys.contains(&Keycode::Down),
                         "Left" => keys.contains(&Keycode::Left),
                         "Right" => keys.contains(&Keycode::Right),
+
+                        k if k.starts_with('F') => match k {
+                            "F1" => keys.contains(&Keycode::F1),
+                            "F2" => keys.contains(&Keycode::F2),
+                            "F3" => keys.contains(&Keycode::F3),
+                            "F4" => keys.contains(&Keycode::F4),
+                            "F5" => keys.contains(&Keycode::F5),
+                            "F6" => keys.contains(&Keycode::F6),
+                            "F7" => keys.contains(&Keycode::F7),
+                            "F8" => keys.contains(&Keycode::F8),
+                            "F9" => keys.contains(&Keycode::F9),
+                            "F10" => keys.contains(&Keycode::F10),
+                            "F11" => keys.contains(&Keycode::F11),
+                            "F12" => keys.contains(&Keycode::F12),
+                            _ => false,
+                        },
+
+                        k if k.len() == 1 && k.chars().next().unwrap().is_ascii_digit() => {
+                            let d = k.chars().next().unwrap();
+                            keys.iter().any(|kc| match kc {
+                                Keycode::Key0 => d == '0',
+                                Keycode::Key1 => d == '1',
+                                Keycode::Key2 => d == '2',
+                                Keycode::Key3 => d == '3',
+                                Keycode::Key4 => d == '4',
+                                Keycode::Key5 => d == '5',
+                                Keycode::Key6 => d == '6',
+                                Keycode::Key7 => d == '7',
+                                Keycode::Key8 => d == '8',
+                                Keycode::Key9 => d == '9',
+                                _ => false,
+                            })
+                        },
+
+                        k if k.len() == 1 => {
+                            let c = k.chars().next().unwrap().to_ascii_lowercase();
+                            keys.iter().any(|kc| match kc {
+                                Keycode::A => c == 'a',
+                                Keycode::B => c == 'b',
+                                Keycode::C => c == 'c',
+                                Keycode::D => c == 'd',
+                                Keycode::E => c == 'e',
+                                Keycode::F => c == 'f',
+                                Keycode::G => c == 'g',
+                                Keycode::H => c == 'h',
+                                Keycode::I => c == 'i',
+                                Keycode::J => c == 'j',
+                                Keycode::K => c == 'k',
+                                Keycode::L => c == 'l',
+                                Keycode::M => c == 'm',
+                                Keycode::N => c == 'n',
+                                Keycode::O => c == 'o',
+                                Keycode::P => c == 'p',
+                                Keycode::Q => c == 'q',
+                                Keycode::R => c == 'r',
+                                Keycode::S => c == 's',
+                                Keycode::T => c == 't',
+                                Keycode::U => c == 'u',
+                                Keycode::V => c == 'v',
+                                Keycode::W => c == 'w',
+                                Keycode::X => c == 'x',
+                                Keycode::Y => c == 'y',
+                                Keycode::Z => c == 'z',
+                                _ => false,
+                            })
+                        }
+
                         _ => false,
                     };
 
