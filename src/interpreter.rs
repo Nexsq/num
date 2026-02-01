@@ -92,13 +92,13 @@ impl Context {
             }
 
             Node::Assign { name, value } => {
+                let v = self.eval(value)?;
                 let mut vars = self.vars.lock().unwrap();
 
                 if !vars.contains_key(name) {
                     return Err(format!("variable '{}' is not defined", name));
                 }
 
-                let v = self.eval(value)?;
                 vars.insert(name.clone(), v);
             }
 
