@@ -86,10 +86,20 @@ impl Context {
         }
 
         match n {
-            Node::VarDecl { name, value }
-            | Node::Assign { name, value } => {
+            Node::VarDecl { name, value } => {
                 let v = self.eval(value)?;
                 self.vars.lock().unwrap().insert(name.clone(), v);
+            }
+
+            Node::Assign { name, value } => {
+                let mut vars = self.vars.lock().unwrap();
+
+                if !vars.contains_key(name) {
+                    return Err(format!("variable '{}' is not defined", name));
+                }
+
+                let v = self.eval(value)?;
+                vars.insert(name.clone(), v);
             }
 
             Node::Call { name, args } => {

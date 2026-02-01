@@ -33,6 +33,8 @@ pub mod get_mouse;
 pub mod beep;
 pub mod background;
 pub mod get_resolution;
+pub mod color;
+pub mod get_color;
 
 pub type BuiltinFn = fn(Vec<Value>) -> Value;
 
@@ -52,4 +54,6 @@ pub fn register_all(map: &mut HashMap<String, BuiltinFn>) {
     beep::register(map);
     background::register(map);
     get_resolution::register(map);
+    color::register(map);
+    get_color::register(map);
 }

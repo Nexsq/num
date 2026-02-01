@@ -179,7 +179,7 @@ impl Lexer {
             self.bump();
         }
         match s.as_str() {
-            "var" => TokenKind::Var,
+            "let" => TokenKind::Var,
             "def" => TokenKind::Def,
             "return" => TokenKind::Return,
             "if" => TokenKind::If,
