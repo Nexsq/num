@@ -125,14 +125,14 @@ await (f) {
 
 ```
 # config
-x = 500
-y = 500
-d = 1
+let x = 500
+let y = 500
+let d = 1
 
 # moves the mouse smoothly to a point
 def move(x, y, d) {
-	var currentX = get_mouse(hor)
-	var currentY = get_mouse(ver)
+	let currentX = get_mouse(hor)
+	let currentY = get_mouse(ver)
 
 	while(currentX != x || currentY != y) {
 		currentX = get_mouse(hor)
@@ -156,7 +156,7 @@ def move(x, y, d) {
 	}
 }
 
-# runs the function on RAlt release
+# runs the function on RAlt press
 async {
 	while(true) {
 		await(RAlt) {
