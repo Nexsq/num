@@ -101,12 +101,25 @@ await (f) {
 </details>
 <br>
 <h4>&nbsp;• built-in functions</h4>
-  &nbsp;❯ <code># &lt;comment&gt;</code><br>
-  &nbsp;❯ <code>print(&lt;argument&gt;)</code><i> prints an argument</i><br>
-  &nbsp;❯ <code>sleep(&lt;milliseconds&gt;)</code><i> sleeps for a given duration (blocks the thread)</i><br>
-  &nbsp;❯ <code>click(&lt;key&gt;)</code><i> clicks the key</i><br>
-  &nbsp;❯ <code>press(&lt;key&gt;)</code><i> keeps the key pressed</i><br>
-  &nbsp;❯ <code>release(&lt;key&gt;)</code><i> releases the key</i><br><br>
+  &nbsp;❯ <code># comment;</code><br>
+  &nbsp;❯ <code>print(argument)</code><i> prints an argument</i><br>
+  &nbsp;❯ <code>sleep(milliseconds)</code><i> sleeps for a given duration (blocks the thread)</i><br>
+  &nbsp;❯ <code>click(key)</code><i> clicks the key</i><br>
+  &nbsp;❯ <code>press(key)</code><i> keeps the key pressed</i><br>
+  &nbsp;❯ <code>release(key)</code><i> releases the key</i><br>
+  &nbsp;❯ <code>scroll(key, ver/hor)</code><i> scrolls in a direction</i><br>
+  &nbsp;❯ <code>mouse(x, y, rel/abs)</code><i> moves the mouse cursor to a position</i><br>
+  &nbsp;❯ <code>string("text")</code><i> writes some text (just like you would using a keyboard - outside the program)</i><br>
+  &nbsp;❯ <code>time(ms/s/m/h/day/month/year)</code><i> returns current time</i><br>
+  &nbsp;❯ <code>random(x, y)</code><i> returns a random number in range x to y</i><br>
+  &nbsp;❯ <code>get_mouse(x/y)</code><i> returns mouse cursor coordinates</i><br>
+  &nbsp;❯ <code>get_resolution(hor/ver)</code><i> returns screen resolution</i><br>
+  &nbsp;❯ <code>get_color(x, y)</code><i> returns hex color of a given pixel</i><br>
+  &nbsp;❯ <code>color("#hex", x, y, tolerance)</code><i> returns true if color of a given pixel is right</i><br>
+  &nbsp;❯ <code>process(process.exe)</code><i> returns true if process is active</i><br>
+  &nbsp;❯ <code>beep(pitch)</code><i> beeps</i><br>
+  &nbsp;❯ <code>background()</code><i> makes the program run in background</i><br>
+  &nbsp;❯ <code>exit()</code><i> exits the program</i><br><br>
 
 <details><summary><span>Example macro.num</span></summary><br>
 
