@@ -18,10 +18,10 @@ if(true){ # <- no spaces needed here
   print("this is also valid")
 }
 ```
-<br>
-<h4>&nbsp;• control flow</h4>
 
-  &nbsp;**❯** <code>if, elif, else</code><br>
+<details><summary><span>Control flow</span></summary><br>
+
+  &nbsp;**•** <code>if, elif, else</code><br>
 
 ```
 if (false) {
@@ -33,7 +33,7 @@ if (false) {
 }
 ```
 
-  &nbsp;**❯** <code>while</code><br>
+  &nbsp;**•** <code>while</code><br>
 
 ```
 while (true) {
@@ -42,7 +42,7 @@ while (true) {
 }
 ```
 
-  &nbsp;**❯** <code>loop</code><br>
+  &nbsp;**•** <code>loop</code><br>
 
 ```
 loop (3) {
@@ -51,10 +51,11 @@ loop (3) {
   print("this will never print")
 }
 ```
-<br>
-<h4>&nbsp;• declarations</h4>
 
-  &nbsp;**❯** <code>function</code><br>
+</details>
+<details><summary><span>Declarations</span></summary><br>
+
+  &nbsp;**•** <code>function</code><br>
 
 ```
 def foo(x, y) {
@@ -75,17 +76,29 @@ def baz(x) {
 print(baz(2) + " is the number!")
 ```
 
-  &nbsp;**❯** <code>async</code><br>
+  &nbsp;**•** <code>async</code><br>
 
 ```
-
+# simply spawns a new thread so sleep will not block the main one
+async {
+  sleep(2000)
+  print("and this after 2 seconds")
+}
+print("this will run immediately")
 ```
 
-  &nbsp;**❯** <code>await</code><br>
+  &nbsp;**•** <code>await</code><br>
 
 ```
-
+# waits till F key is pressed and then released
+await (f) {
+  print("f was pressed")
+  await (!f) {
+    print("and f was released")
+  }
+}
 ```
+</details>
 <br>
 <h4>&nbsp;• built-in functions</h4>
   &nbsp;❯ <code># &lt;comment&gt;</code><br>
@@ -95,7 +108,7 @@ print(baz(2) + " is the number!")
   &nbsp;❯ <code>press(&lt;key&gt;)</code><i> keeps the key pressed</i><br>
   &nbsp;❯ <code>release(&lt;key&gt;)</code><i> releases the key</i><br><br>
 
-<details><summary><span>Example macro.num:</span></summary><br>
+<details><summary><span>Example macro.num</span></summary><br>
 
 ```
 # config
