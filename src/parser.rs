@@ -49,19 +49,16 @@ impl Parser {
     }
 
     fn await_stmt(&mut self) -> Result<Node, String> {
-        self.advance();
+        self.advance(); // await
         self.expect(TokenKind::LParen)?;
 
         let negated = self.match_tok(TokenKind::Bang);
 
-        let key = match &self.advance().kind {
-            TokenKind::Ident(s) => s.clone(),
-            TokenKind::Number(n) => n.to_string(),
-            _ => return self.err("Expected key identifier or number"),
-        };
+        let key = self.expr()?;
 
         self.expect(TokenKind::RParen)?;
         while self.match_tok(TokenKind::Semicolon) {}
+
         let body = self.block()?;
         Ok(Node::Await { key, negated, body })
     }

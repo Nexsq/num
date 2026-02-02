@@ -49,7 +49,7 @@ pub enum Node {
         body: Vec<Node>,
     },
     Await {
-        key: String,
+        key: Expr,
         negated: bool,
         body: Vec<Node>,
     },

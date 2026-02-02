@@ -153,6 +153,13 @@ impl Context {
             Node::Await { key, negated, body } => {
                 let device = DeviceState::new();
 
+                let key = match self.eval(key)? {
+                    Value::Symbol(s) => s,
+                    Value::Str(s) => s,
+                    Value::Num(n) => n.to_string(),
+                    _ => return Err("key must be a symbol, string, or a number".into()),
+                };
+
                 loop {
                     let keys = device.get_keys();
                     let mouse = device.get_mouse().button_pressed;
