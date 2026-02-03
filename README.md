@@ -79,6 +79,7 @@ print(baz(2) + " is the number!")
 
 ```
 # simply spawns a new thread so sleep will not block the main one
+# putting async in functions is not recommended
 async {
   sleep(2000)
   print("and this after 2 seconds")
