@@ -1,9 +1,9 @@
 use std::collections::HashMap;
-use sysinfo::{System, ProcessesToUpdate};
+use sysinfo::{ProcessesToUpdate, System};
 
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("process".into(), process);

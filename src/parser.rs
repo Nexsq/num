@@ -1,4 +1,7 @@
-use crate::{ast::{Expr, Node, Op}, token::{Token, TokenKind}};
+use crate::{
+    ast::{Expr, Node, Op},
+    token::{Token, TokenKind},
+};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -34,8 +37,16 @@ impl Parser {
             TokenKind::Await => self.await_stmt(),
             TokenKind::Def => self.func_def(),
             TokenKind::Return => self.return_stmt(),
-            TokenKind::Break => { self.advance(); self.match_tok(TokenKind::Semicolon); Ok(Node::Break) }
-            TokenKind::Continue => { self.advance(); self.match_tok(TokenKind::Semicolon); Ok(Node::Continue) }
+            TokenKind::Break => {
+                self.advance();
+                self.match_tok(TokenKind::Semicolon);
+                Ok(Node::Break)
+            }
+            TokenKind::Continue => {
+                self.advance();
+                self.match_tok(TokenKind::Semicolon);
+                Ok(Node::Continue)
+            }
             TokenKind::Ident(_) => self.call_or_assign(),
             _ => self.err("Unexpected token"),
         }
@@ -163,7 +174,11 @@ impl Parser {
             None
         };
 
-        Ok(Node::If { cond, then_body, else_body })
+        Ok(Node::If {
+            cond,
+            then_body,
+            else_body,
+        })
     }
 
     fn elif_chain(&mut self) -> Result<Node, String> {
@@ -183,7 +198,11 @@ impl Parser {
             None
         };
 
-        Ok(Node::If { cond, then_body, else_body })
+        Ok(Node::If {
+            cond,
+            then_body,
+            else_body,
+        })
     }
 
     fn loop_stmt(&mut self) -> Result<Node, String> {

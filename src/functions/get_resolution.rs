@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
+use std::collections::HashMap;
 
 #[cfg(windows)]
 use winapi::um::winuser::{GetSystemMetrics, SM_CXSCREEN, SM_CYSCREEN};

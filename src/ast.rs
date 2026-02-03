@@ -4,10 +4,7 @@ pub enum Expr {
     Str(String),
     Bool(bool),
     Var(String),
-    Call {
-        name: String,
-        args: Vec<Expr>,
-    },
+    Call { name: String, args: Vec<Expr> },
     Unary(Op, Box<Expr>),
     Binary(Box<Expr>, Op, Box<Expr>),
 }

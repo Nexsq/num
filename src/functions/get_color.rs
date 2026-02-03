@@ -1,11 +1,11 @@
+use scrap::{Capturer, Display};
 use std::collections::HashMap;
 use std::io::ErrorKind;
 use std::time::Duration;
-use scrap::{Capturer, Display};
 
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("get_color".into(), get_color);

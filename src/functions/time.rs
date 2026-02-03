@@ -1,6 +1,6 @@
-use crate::interpreter::Value;
 use crate::functions::expect_arity;
-use chrono::{Datelike, Timelike, Local};
+use crate::interpreter::Value;
+use chrono::{Datelike, Local, Timelike};
 
 pub fn register(map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Value>) {
     map.insert("time".into(), time);

@@ -1,11 +1,11 @@
+use scrap::{Capturer, Display};
 use std::collections::HashMap;
 use std::io::ErrorKind;
 use std::time::Duration;
-use scrap::{Capturer, Display};
 
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("color".into(), color);
@@ -81,9 +81,7 @@ fn color(args: Vec<Value>) -> Value {
                 let g = frame[idx + 1] as i64;
                 let r = frame[idx + 2] as i64;
                 return Value::Bool(
-                    (r - er).abs() <= tol &&
-                    (g - eg).abs() <= tol &&
-                    (b - eb).abs() <= tol
+                    (r - er).abs() <= tol && (g - eg).abs() <= tol && (b - eb).abs() <= tol,
                 );
             }
             Err(e) if e.kind() == ErrorKind::WouldBlock => {

@@ -1,11 +1,7 @@
-use std::collections::HashMap;
 use crate::interpreter::Value;
+use std::collections::HashMap;
 
-pub fn expect_arity(
-    name: &str,
-    args: &[Value],
-    expected: usize,
-) -> Result<(), Value> {
+pub fn expect_arity(name: &str, args: &[Value], expected: usize) -> Result<(), Value> {
     if args.len() < expected {
         Err(Value::Error(format!(
             "{} expects {} argument(s), got {}",
@@ -18,24 +14,25 @@ pub fn expect_arity(
     }
 }
 
-pub mod print;
-pub mod sleep;
+pub mod abs;
+pub mod background;
+pub mod beep;
 pub mod click;
+pub mod color;
+pub mod exit;
+pub mod get_color;
+pub mod get_mouse;
+pub mod get_resolution;
+pub mod mouse;
 pub mod press;
+pub mod print;
+pub mod process;
+pub mod random;
 pub mod release;
 pub mod scroll;
-pub mod mouse;
+pub mod sleep;
 pub mod string;
-pub mod exit;
 pub mod time;
-pub mod random;
-pub mod get_mouse;
-pub mod beep;
-pub mod background;
-pub mod get_resolution;
-pub mod color;
-pub mod get_color;
-pub mod process;
 
 pub type BuiltinFn = fn(Vec<Value>) -> Value;
 
@@ -58,4 +55,5 @@ pub fn register_all(map: &mut HashMap<String, BuiltinFn>) {
     color::register(map);
     get_color::register(map);
     process::register(map);
+    abs::register(map);
 }

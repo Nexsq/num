@@ -43,37 +43,100 @@ impl Lexer {
         };
 
         let kind = match c {
-            '.' => { self.bump(); TokenKind::Dot }
-            '(' => { self.bump(); TokenKind::LParen }
-            ')' => { self.bump(); TokenKind::RParen }
-            '{' => { self.bump(); TokenKind::LBrace }
-            '}' => { self.bump(); TokenKind::RBrace }
-            ',' => { self.bump(); TokenKind::Comma }
-            ';' => { self.bump(); TokenKind::Semicolon }
-            '+' => { self.bump(); TokenKind::Plus }
-            '-' => { self.bump(); TokenKind::Minus }
-            '*' => { self.bump(); TokenKind::Star }
-            '/' => { self.bump(); TokenKind::Slash }
-            '=' => {
-                if self.peek2('=') { self.bump2(); TokenKind::EqEq }
-                else { self.bump(); TokenKind::Eq }
+            '.' => {
+                self.bump();
+                TokenKind::Dot
             }
-            '!' if self.peek2('=') => { self.bump2(); TokenKind::Ne }
-            '!' => { self.bump(); TokenKind::Bang }
+            '(' => {
+                self.bump();
+                TokenKind::LParen
+            }
+            ')' => {
+                self.bump();
+                TokenKind::RParen
+            }
+            '{' => {
+                self.bump();
+                TokenKind::LBrace
+            }
+            '}' => {
+                self.bump();
+                TokenKind::RBrace
+            }
+            ',' => {
+                self.bump();
+                TokenKind::Comma
+            }
+            ';' => {
+                self.bump();
+                TokenKind::Semicolon
+            }
+            '+' => {
+                self.bump();
+                TokenKind::Plus
+            }
+            '-' => {
+                self.bump();
+                TokenKind::Minus
+            }
+            '*' => {
+                self.bump();
+                TokenKind::Star
+            }
+            '/' => {
+                self.bump();
+                TokenKind::Slash
+            }
+            '=' => {
+                if self.peek2('=') {
+                    self.bump2();
+                    TokenKind::EqEq
+                } else {
+                    self.bump();
+                    TokenKind::Eq
+                }
+            }
+            '!' if self.peek2('=') => {
+                self.bump2();
+                TokenKind::Ne
+            }
+            '!' => {
+                self.bump();
+                TokenKind::Bang
+            }
             '>' => {
-                if self.peek2('=') { self.bump2(); TokenKind::Ge }
-                else { self.bump(); TokenKind::Gt }
+                if self.peek2('=') {
+                    self.bump2();
+                    TokenKind::Ge
+                } else {
+                    self.bump();
+                    TokenKind::Gt
+                }
             }
             '<' => {
-                if self.peek2('=') { self.bump2(); TokenKind::Le }
-                else { self.bump(); TokenKind::Lt }
+                if self.peek2('=') {
+                    self.bump2();
+                    TokenKind::Le
+                } else {
+                    self.bump();
+                    TokenKind::Lt
+                }
             }
-            '&' if self.peek2('&') => { self.bump2(); TokenKind::AndAnd }
-            '|' if self.peek2('|') => { self.bump2(); TokenKind::OrOr }
+            '&' if self.peek2('&') => {
+                self.bump2();
+                TokenKind::AndAnd
+            }
+            '|' if self.peek2('|') => {
+                self.bump2();
+                TokenKind::OrOr
+            }
             '"' => self.read_string(),
             c if c.is_ascii_digit() => self.read_number(),
             c if c.is_ascii_alphabetic() || c == '_' => self.read_ident(),
-            _ => { self.bump(); return self.next_token(); }
+            _ => {
+                self.bump();
+                return self.next_token();
+            }
         };
 
         self.last_token = Some(kind.clone());
@@ -129,7 +192,11 @@ impl Lexer {
     }
 
     fn make(&self, kind: TokenKind) -> Token {
-        Token { kind, line: self.line, col: self.col }
+        Token {
+            kind,
+            line: self.line,
+            col: self.col,
+        }
     }
 
     fn bump(&mut self) {
@@ -155,7 +222,9 @@ impl Lexer {
         let mut s = String::new();
         while let Some(c) = self.peek() {
             self.bump();
-            if c == '"' { break; }
+            if c == '"' {
+                break;
+            }
             s.push(c);
         }
         TokenKind::Str(s)
@@ -164,7 +233,9 @@ impl Lexer {
     fn read_number(&mut self) -> TokenKind {
         let mut s = String::new();
         while let Some(c) = self.peek() {
-            if !c.is_ascii_digit() { break; }
+            if !c.is_ascii_digit() {
+                break;
+            }
             s.push(c);
             self.bump();
         }
@@ -174,7 +245,9 @@ impl Lexer {
     fn read_ident(&mut self) -> TokenKind {
         let mut s = String::new();
         while let Some(c) = self.peek() {
-            if !(c.is_ascii_alphanumeric() || c == '_') { break; }
+            if !(c.is_ascii_alphanumeric() || c == '_') {
+                break;
+            }
             s.push(c);
             self.bump();
         }

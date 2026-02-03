@@ -1,9 +1,9 @@
+use enigo::{Axis, Enigo, Mouse, Settings};
 use std::collections::HashMap;
-use enigo::{Axis, Enigo, Settings, Mouse};
 
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("scroll".into(), scroll);

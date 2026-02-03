@@ -1,5 +1,5 @@
-use crate::interpreter::Value;
 use crate::functions::expect_arity;
+use crate::interpreter::Value;
 use std::collections::HashMap;
 
 #[cfg(target_os = "windows")]

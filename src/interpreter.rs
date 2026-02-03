@@ -1,7 +1,7 @@
+use device_query::{DeviceQuery, DeviceState, Keycode};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
-use device_query::{DeviceQuery, DeviceState, Keycode};
 
 use crate::ast::{Expr, Node, Op};
 
@@ -177,16 +177,22 @@ impl Context {
                         "Esc" | "Escape" => keys.contains(&Keycode::Escape),
                         "Backspace" => keys.contains(&Keycode::Backspace),
 
-                        "Ctrl" | "Control" => keys.contains(&Keycode::LControl) || keys.contains(&Keycode::RControl),
+                        "Ctrl" | "Control" => {
+                            keys.contains(&Keycode::LControl) || keys.contains(&Keycode::RControl)
+                        }
                         "LCtrl" | "LControl" => keys.contains(&Keycode::LControl),
                         "RCtrl" | "RControl" => keys.contains(&Keycode::RControl),
                         "Alt" => keys.contains(&Keycode::LAlt) || keys.contains(&Keycode::RAlt),
                         "LAlt" => keys.contains(&Keycode::LAlt),
                         "RAlt" | "AltGr" => keys.contains(&Keycode::RAlt),
-                        "Shift" => keys.contains(&Keycode::LShift) || keys.contains(&Keycode::RShift),
+                        "Shift" => {
+                            keys.contains(&Keycode::LShift) || keys.contains(&Keycode::RShift)
+                        }
                         "LShift" => keys.contains(&Keycode::LShift),
                         "RShift" => keys.contains(&Keycode::RShift),
-                        "Super" | "Meta" => keys.contains(&Keycode::LMeta) || keys.contains(&Keycode::RMeta),
+                        "Super" | "Meta" => {
+                            keys.contains(&Keycode::LMeta) || keys.contains(&Keycode::RMeta)
+                        }
                         "CapsLock" | "Caps" => keys.contains(&Keycode::CapsLock),
 
                         "Insert" => keys.contains(&Keycode::Insert),
@@ -320,7 +326,11 @@ impl Context {
                 }
             }
 
-            Node::If { cond, then_body, else_body } => {
+            Node::If {
+                cond,
+                then_body,
+                else_body,
+            } => {
                 let cond = self.eval(cond)?;
                 let branch = match cond {
                     Value::Bool(true) => Some(then_body),
@@ -365,7 +375,12 @@ impl Context {
                 if let Some(cmd) = self.cmds.get(name) {
                     Ok(cmd(vals))
                 } else {
-                    let f = self.funcs.lock().unwrap().get(name).cloned()
+                    let f = self
+                        .funcs
+                        .lock()
+                        .unwrap()
+                        .get(name)
+                        .cloned()
                         .ok_or(format!("undefined function {}", name))?;
 
                     let (params, body) = match f {

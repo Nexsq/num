@@ -1,15 +1,15 @@
 mod ast;
-mod token;
-mod lexer;
-mod parser;
-mod interpreter;
 mod engine;
 mod functions;
+mod interpreter;
+mod lexer;
+mod parser;
+mod token;
 
+use crate::{engine::Engine, lexer::Lexer, parser::Parser};
 use std::env;
 use std::fs;
 use std::io::{self, Read};
-use crate::{lexer::Lexer, parser::Parser, engine::Engine};
 
 fn wait_for_keypress() {
     println!("\nPress any key to exit...");

@@ -1,7 +1,7 @@
-use std::{collections::HashMap, thread, time::Duration};
-use crate::interpreter::Value;
-use crate::functions::expect_arity;
 use super::BuiltinFn;
+use crate::functions::expect_arity;
+use crate::interpreter::Value;
+use std::{collections::HashMap, thread, time::Duration};
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("sleep".into(), sleep);

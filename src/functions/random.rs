@@ -1,5 +1,5 @@
-use crate::interpreter::Value;
 use crate::functions::expect_arity;
+use crate::interpreter::Value;
 use rand::Rng;
 
 pub fn register(map: &mut std::collections::HashMap<String, fn(Vec<Value>) -> Value>) {

@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use crate::interpreter::Value;
 use super::BuiltinFn;
+use crate::interpreter::Value;
+use std::collections::HashMap;
 
 #[cfg(windows)]
 use winapi::um::wincon::FreeConsole;

@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use crate::interpreter::Value;
 use super::BuiltinFn;
+use crate::interpreter::Value;
+use std::collections::HashMap;
 
 pub fn register(map: &mut HashMap<String, BuiltinFn>) {
     map.insert("print".into(), print);
