@@ -1,6 +1,5 @@
 <h1>nexsqs_useless_macro - .num</h1>
 <h5>A not so completely useless macro DSL</h5>
-<h6>(written in rust)</h6><br>
 
 <h4>&nbsp;• syntax</h4>
 
