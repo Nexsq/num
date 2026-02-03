@@ -112,6 +112,7 @@ await (f) {
   &nbsp;❯ <code>string("text")</code><i> writes some text (just like you would using a keyboard - outside the program)</i><br>
   &nbsp;❯ <code>time(ms/s/m/h/day/month/year)</code><i> returns current time</i><br>
   &nbsp;❯ <code>random(x, y)</code><i> returns a random number in range x to y</i><br>
+  &nbsp;❯ <code>abs(value)</code><i> returns the absolute value</i><br>
   &nbsp;❯ <code>get_mouse(x/y)</code><i> returns mouse cursor coordinates</i><br>
   &nbsp;❯ <code>get_resolution(hor/ver)</code><i> returns screen resolution</i><br>
   &nbsp;❯ <code>get_color(x, y)</code><i> returns hex color of a given pixel</i><br>
@@ -125,46 +126,45 @@ await (f) {
 
 ```
 # config
-let x = 500
+let x = 1000
 let y = 500
 let d = 1
+let key = RAlt
 
 # moves the mouse smoothly to a point
-def move(x, y, d) {
-	let currentX = get_mouse(hor)
-	let currentY = get_mouse(ver)
+def move(x, y, d, key) {
+	await(key) {
 
-	while(currentX != x || currentY != y) {
-		currentX = get_mouse(hor)
-		currentY = get_mouse(ver)
+		let currentX = get_mouse(hor)
+		let currentY = get_mouse(ver)
 
-		if(currentX < x) {
-			mouse(1, 0, rel)
-			sleep(d)
-		} elif(currentX > x) {
-			mouse(-1, 0, rel)
-			sleep(d)
-		}
+		while(abs(currentX - x) > 3 || abs(currentY - y) > 3) {
+			currentX = get_mouse(hor)
+			currentY = get_mouse(ver)
 
-		if(currentY < y) {
-			mouse(0, 1, rel)
-			sleep(d)
-		} elif(currentY > y) {
-			mouse(0, -1, rel)
-			sleep(d)
+			if(currentX < x) {
+				mouse(3, 0, rel)
+				sleep(d)
+			} elif(currentX > x) {
+				mouse(-3, 0, rel)
+				sleep(d)
+			}
+
+			if(currentY < y) {
+				mouse(0, 3, rel)
+				sleep(d)
+			} elif(currentY > y) {
+				mouse(0, -3, rel)
+				sleep(d)
+			}
 		}
 	}
 }
 
-# runs the function on RAlt press
+# runs the function on key press
 async {
 	while(true) {
-		await(RAlt) {
-			await(!RAlt) {
-				beep(300)
-				move(x, y, d)
-			}
-		}
+		move(x, y, d, key)
 	}
 }
 ```
