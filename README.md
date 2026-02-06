@@ -104,6 +104,7 @@ await (f) {
   &nbsp;❯ <code># comment;</code><br>
   &nbsp;❯ <code>print(argument)</code><i> prints an argument</i><br>
   &nbsp;❯ <code>sleep(milliseconds)</code><i> sleeps for a given duration (blocks the thread)</i><br>
+  &nbsp;❯ <code>key(key)</code><i> returns true if key is pressed</i><br>
   &nbsp;❯ <code>click(key)</code><i> clicks the key</i><br>
   &nbsp;❯ <code>press(key)</code><i> keeps the key pressed</i><br>
   &nbsp;❯ <code>release(key)</code><i> releases the key</i><br>
