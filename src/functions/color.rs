@@ -28,7 +28,7 @@ fn color(args: Vec<Value>) -> Value {
     }
 
     let hex = match args.get(0) {
-        Some(Value::Symbol(s)) | Some(Value::Str(s)) => s.as_str(),
+        Some(Value::Key(s)) | Some(Value::Str(s)) => s.as_str(),
         _ => return Value::Error("color expects hex string".into()),
     };
 

@@ -12,7 +12,7 @@ fn time(args: Vec<Value>) -> Value {
     }
 
     let unit = match &args[0] {
-        Value::Symbol(s) | Value::Str(s) => s.as_str(),
+        Value::Key(s) | Value::Str(s) => s.as_str(),
         _ => return Value::Error("time expects unit name".into()),
     };
 

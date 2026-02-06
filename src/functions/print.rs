@@ -12,7 +12,7 @@ fn print(args: Vec<Value>) -> Value {
             Value::Num(n) => print!("{}", n),
             Value::Str(s) => print!("{}", s),
             Value::Bool(b) => print!("{}", b),
-            Value::Symbol(s) => print!("{}", s),
+            Value::Key(k) => print!("{}", k),
             Value::Error(e) => eprint!("Error: {}", e),
         }
     }
